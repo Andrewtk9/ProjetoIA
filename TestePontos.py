@@ -1,24 +1,29 @@
 import random
 import matplotlib.pyplot as plt
+import math
 
-def generate_points(x_min, x_max, y_min, y_max, num_points, distribution='random'):
-    """
-    Gera pontos dentro de uma área definida pelos limites.
-    :param x_min: Coordenada mínima em x
-    :param x_max: Coordenada máxima em x
-    :param y_min: Coordenada mínima em y
-    :param y_max: Coordenada máxima em y
-    :param num_points: Número de pontos a serem gerados
-    :param distribution: Tipo de distribuição ('random' ou 'grid')
-    :return: Lista de tuplas representando os pontos
-    """
+def generate_points(x_min, x_max, y_min, y_max, num_points, distribution='random', restricted_areas=None, min_distance=2):
     points = []
     
+    def is_in_restricted_area(x, y):
+        if restricted_areas:
+            for rx_min, rx_max, ry_min, ry_max in restricted_areas:
+                if rx_min <= x <= rx_max and ry_min <= y <= ry_max:
+                    return True
+        return False
+    
+    def has_min_distance(x, y):
+        for px, py in points:
+            if math.dist((x, y), (px, py)) < min_distance:
+                return False
+        return True
+    
     if distribution == 'random':
-        for _ in range(num_points):
+        while len(points) < num_points:
             x = random.uniform(x_min, x_max)
             y = random.uniform(y_min, y_max)
-            points.append((x, y))
+            if not is_in_restricted_area(x, y) and has_min_distance(x, y):
+                points.append((x, y))
     elif distribution == 'grid':
         cols = int(num_points ** 0.5)
         rows = (num_points // cols) + (1 if num_points % cols else 0)
@@ -30,36 +35,44 @@ def generate_points(x_min, x_max, y_min, y_max, num_points, distribution='random
                     break
                 x = x_min + j * x_spacing
                 y = y_min + i * y_spacing
-                points.append((x, y))
+                if not is_in_restricted_area(x, y) and has_min_distance(x, y):
+                    points.append((x, y))
     else:
         raise ValueError("Distribuição inválida. Use 'random' ou 'grid'.")
     
     return points
 
-def plot_points(points):
-    """
-    Plota os pontos gerados para visualização.
-    """
+def save_points_to_file(points, filename="pontos.txt"):
+    with open(filename, "w") as file:
+        for i, (x, y) in enumerate(points, start=1):
+            file.write(f"Ponto{i}: ({int(x)}, {int(y)})\n")
+    print(f"Pontos salvos em {filename}")
+
+def plot_points(points, restricted_areas=None):
     x_vals, y_vals = zip(*points)
-    plt.scatter(x_vals, y_vals, c='blue', marker='o')
+    plt.scatter(x_vals, y_vals, c='blue', marker='o', label='Pontos Válidos')
+    
+    if restricted_areas:
+        for rx_min, rx_max, ry_min, ry_max in restricted_areas:
+            plt.fill_between([rx_min, rx_max], ry_min, ry_max, color='red', alpha=0.3, label='Área Restrita')
+    
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('Pontos Gerados')
+    plt.legend()
     plt.grid()
     plt.show()
 
 if __name__ == "__main__":
-    # Definir a área e número de pontos
     x_min, x_max = 0, 100
     y_min, y_max = 0, 100
-    num_points = 50
+    num_points = 200
     
-    # Gerar pontos
-    points = generate_points(x_min, x_max, y_min, y_max, num_points, distribution='random')
+    restricted_areas = [(0, 20, 0, 100), (0, 100, 0, 40), (0, 100, 70, 100), (80, 100, 0, 100),
+                        (25, 32, 45, 60), (35, 60, 45, 52), (65, 72, 45, 60), (35, 60, 57, 80)]
     
-    # Exibir os pontos gerados
-    print("Pontos Gerados:", points)
+    points = generate_points(x_min, x_max, y_min, y_max, num_points, distribution='random',
+                             restricted_areas=restricted_areas, min_distance=2)
     
-    # Plotar os pontos
-    plot_points(points)
-    
+    save_points_to_file(points, "pontos.txt")
+    plot_points(points, restricted_areas)
