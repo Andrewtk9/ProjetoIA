@@ -1,5 +1,6 @@
 import random
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import math
 
 def generate_points(x_min, x_max, y_min, y_max, num_points, distribution='random', restricted_areas=None, min_distance=2):
@@ -48,7 +49,16 @@ def save_points_to_file(points, filename="pontos.txt"):
             file.write(f"Ponto{i}: ({int(x)}, {int(y)})\n")
     print(f"Pontos salvos em {filename}")
 
-def plot_points(points, restricted_areas=None):
+def plot_points(points, restricted_areas=None, background_image=None):
+    plt.figure(figsize=(8, 8))
+    
+    if background_image:
+        try:
+            img = mpimg.imread(background_image)
+            plt.imshow(img, extent=[0, 305, 0, 151], aspect='auto', origin='upper')
+        except FileNotFoundError:
+            print(f"Erro: Imagem '{background_image}' não encontrada.")
+    
     x_vals, y_vals = zip(*points)
     plt.scatter(x_vals, y_vals, c='blue', marker='o', label='Pontos Válidos')
     
@@ -64,15 +74,17 @@ def plot_points(points, restricted_areas=None):
     plt.show()
 
 if __name__ == "__main__":
-    x_min, x_max = 0, 100
-    y_min, y_max = 0, 100
-    num_points = 200
+    x_min, x_max = 0, 305
+    y_min, y_max = 0, 151
+    num_points = 270
     
-    restricted_areas = [(0, 20, 0, 100), (0, 100, 0, 40), (0, 100, 70, 100), (80, 100, 0, 100),
-                        (25, 32, 45, 60), (35, 60, 45, 52), (65, 72, 45, 60), (35, 60, 57, 80)]
+    restricted_areas = [(0, 15, 0, 151), (0, 305, 0, 27), (0, 305, 115, 151), (290, 305, 0, 151),
+                        (20, 55, 33, 105), (59,137, 33, 51), (240, 283, 33,110), (60, 230, 57,115),(142, 230, 27,57)]
     
     points = generate_points(x_min, x_max, y_min, y_max, num_points, distribution='random',
                              restricted_areas=restricted_areas, min_distance=2)
     
     save_points_to_file(points, "pontos.txt")
-    plot_points(points, restricted_areas)
+    
+    background_image = "background.png"  # Substitua pelo caminho do arquivo de imagem desejado
+    plot_points(points, restricted_areas, background_image)
