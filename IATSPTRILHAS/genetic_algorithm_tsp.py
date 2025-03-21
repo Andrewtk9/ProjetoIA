@@ -212,7 +212,7 @@ class GeneticAlgorithmTSP:
             total_cost = 0
             for i in range(len(path) - 1):
                 if self.is_connection_restricted(path[i], path[i + 1]):
-                    total_cost += 200  # Adiciona um custo fixo de 1000 para conexões restritas
+                    total_cost += 600  # Adiciona um custo fixo de 1000 para conexões restritas
                 else:
                     total_cost += graph.getPathCost(path[i] + path[i + 1])
             fitness_values.append(total_cost)

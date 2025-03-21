@@ -42,8 +42,8 @@
 		(pad_to_mask_clearance 0)
 		(allow_soldermask_bridges_in_footprints no)
 		(pcbplotparams
-			(layerselection 0x00010fc_ffffffff)
-			(plot_on_all_layers_selection 0x0000000_00000000)
+			(layerselection 0x0001000_7ffffffe)
+			(plot_on_all_layers_selection 0x0001000_00000000)
 			(disableapertmacros no)
 			(usegerberextensions no)
 			(usegerberattributes yes)
@@ -74,9 +74,9 @@
 			(subtractmaskfromsilk no)
 			(outputformat 1)
 			(mirror no)
-			(drillshape 1)
+			(drillshape 0)
 			(scaleselection 1)
-			(outputdirectory "")
+			(outputdirectory "CNC/")
 		)
 	)
 	(net 0 "")
@@ -601,17 +601,6 @@
 		)
 	)
 	(gr_rect
-		(start 58.47 51.07)
-		(end 89 66.17)
-		(stroke
-			(width 0.2)
-			(type default)
-		)
-		(fill none)
-		(layer "B.Cu")
-		(uuid "5a2f161e-0b9c-4583-be6e-fcde04add2b0")
-	)
-	(gr_rect
 		(start 82.95 55.17)
 		(end 87.21 63.18)
 		(stroke
@@ -633,6 +622,17 @@
 		(layer "B.Cu")
 		(net 2)
 		(uuid "7f2f5efd-8049-40db-953d-c2526ee3f752")
+	)
+	(gr_rect
+		(start 58.47 51.07)
+		(end 89 66.17)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill none)
+		(layer "Edge.Cuts")
+		(uuid "3bf7f979-06d4-4f7c-942d-1c8152bf2548")
 	)
 	(segment
 		(start 65.345 62.13)
@@ -662,7 +662,7 @@
 		)
 		(min_thickness 0.25)
 		(filled_areas_thickness no)
-		(fill
+		(fill yes
 			(thermal_gap 0.5)
 			(thermal_bridge_width 0.5)
 			(island_removal_mode 1)
@@ -671,6 +671,23 @@
 		(polygon
 			(pts
 				(xy 82.95 63.18) (xy 87.21 63.18) (xy 87.21 55.17) (xy 82.95 55.17)
+			)
+		)
+		(filled_polygon
+			(layer "B.Cu")
+			(island)
+			(pts
+				(xy 86.552539 55.790185) (xy 86.598294 55.842989) (xy 86.6095 55.8945) (xy 86.6095 62.4555) (xy 86.589815 62.522539)
+				(xy 86.537011 62.568294) (xy 86.4855 62.5795) (xy 85.378252 62.5795) (xy 85.311213 62.559815) (xy 85.265458 62.507011)
+				(xy 85.255514 62.437853) (xy 85.258477 62.423408) (xy 85.261091 62.413647) (xy 85.265635 62.396692)
+				(xy 85.285468 62.17) (xy 85.265635 61.943308) (xy 85.206739 61.723504) (xy 85.110568 61.517266)
+				(xy 84.980047 61.330861) (xy 84.980045 61.330858) (xy 84.819141 61.169954) (xy 84.632734 61.039432)
+				(xy 84.632732 61.039431) (xy 84.426497 60.943261) (xy 84.426488 60.943258) (xy 84.206697 60.884366)
+				(xy 84.206693 60.884365) (xy 84.206692 60.884365) (xy 84.206691 60.884364) (xy 84.206686 60.884364)
+				(xy 83.980002 60.864532) (xy 83.979999 60.864532) (xy 83.753308 60.884365) (xy 83.753305 60.884365)
+				(xy 83.706593 60.896882) (xy 83.636743 60.895219) (xy 83.578881 60.856056) (xy 83.551377 60.791827)
+				(xy 83.5505 60.777107) (xy 83.5505 55.8945) (xy 83.570185 55.827461) (xy 83.622989 55.781706) (xy 83.6745 55.7705)
+				(xy 86.4855 55.7705)
 			)
 		)
 	)
@@ -685,7 +702,7 @@
 		)
 		(min_thickness 0.25)
 		(filled_areas_thickness no)
-		(fill
+		(fill yes
 			(thermal_gap 0.5)
 			(thermal_bridge_width 0.5)
 			(island_removal_mode 1)
@@ -694,6 +711,19 @@
 		(polygon
 			(pts
 				(xy 60.48 55.64) (xy 60.48 63.05) (xy 63.77 63.05) (xy 63.77 55.64)
+			)
+		)
+		(filled_polygon
+			(layer "B.Cu")
+			(island)
+			(pts
+				(xy 63.112539 56.260185) (xy 63.158294 56.312989) (xy 63.1695 56.3645) (xy 63.1695 60.6055) (xy 63.149815 60.672539)
+				(xy 63.097011 60.718294) (xy 63.0455 60.7295) (xy 61.857129 60.7295) (xy 61.857123 60.729501) (xy 61.797516 60.735908)
+				(xy 61.662671 60.786202) (xy 61.662664 60.786206) (xy 61.547455 60.872452) (xy 61.547452 60.872455)
+				(xy 61.461206 60.987664) (xy 61.461202 60.987671) (xy 61.410908 61.122517) (xy 61.404501 61.182116)
+				(xy 61.4045 61.182135) (xy 61.404501 62.3255) (xy 61.384816 62.392539) (xy 61.332013 62.438294)
+				(xy 61.280501 62.4495) (xy 61.2045 62.4495) (xy 61.137461 62.429815) (xy 61.091706 62.377011) (xy 61.0805 62.3255)
+				(xy 61.0805 56.3645) (xy 61.100185 56.297461) (xy 61.152989 56.251706) (xy 61.2045 56.2405) (xy 63.0455 56.2405)
 			)
 		)
 	)
