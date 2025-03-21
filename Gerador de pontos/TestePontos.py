@@ -32,7 +32,7 @@ def save_points_to_file(points, filename="pontos.txt"):
     if points:
         with open(filename, "w") as file:
             for i, (x, y) in enumerate(points, 1):
-                file.write(f"Ponto{i}: ({x}, {y})\n")
+                file.write(f"Ponto{i}: ({y}, {x})\n")
         print(f"Pontos salvos em {filename}")
     else:
         print("Nenhum ponto válido gerado para salvar.")
