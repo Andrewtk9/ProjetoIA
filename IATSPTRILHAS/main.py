@@ -37,8 +37,8 @@ def main():
     ga_tsp_germany = GeneticAlgorithmTSP(
         graph=germany_graph,
         city_names=[city for city, _, _ in cities], # pass the list of city names
-        generations=400,
-        population_size=1000,
+        generations=10,
+        population_size=100,
         tournament_size=5,
         mutationRate=0.1,
         fitness_selection_rate=0.5,

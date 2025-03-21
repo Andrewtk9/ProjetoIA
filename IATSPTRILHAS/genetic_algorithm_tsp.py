@@ -3,35 +3,21 @@ import math
 import numpy as np
 from collections import OrderedDict
 
+restricted_areas = [ (20, 55, 33, 105), (59, 137, 33, 51), (240, 283, 33, 110), (142, 232, 27, 57)]
+
 class GeneticAlgorithmTSP:
 
     def __init__(self, graph, city_names, generations=20, population_size=10, tournament_size=4, mutationRate=0.1, fitness_selection_rate=0.1):
-        """
-        Initialize the GeneticAlgorithmTSP object.
-
-        Parameters:
-        - graph: The Graph object representing the TSP graph.
-        - city_names: List of city names.
-        - generations: Number of generations to run the algorithm.
-        - population_size: Size of the population of routes.
-        - tournament_size: Number of routes to select for crossover.
-        - mutationRate: Probability of mutation for a genome.
-        - fitness_selection_rate: Percentage of fittest routes to carry over to the next generation.
-        """
         self.graph = graph
         self.population_size = population_size
         self.generations = generations
         self.tournament_size = tournament_size
         self.mutationRate = mutationRate
         self.fitness_selection_rate = fitness_selection_rate
-
-        # storing genetic diversity values
         self.genetic_diversity_values = []
 
-        # Mapping between city names and characters
         self.city_map = OrderedDict((char, city) for char, city in zip(range(32, 263), graph.vertices()))
         self.city_mapping = {char: city for char, city in zip(range(32, 263), city_names)}
-        # I don't know why this happens
         self.city_map[32], self.city_map[33] = self.city_map[33], self.city_map[32]
 
     def calculate_genetic_diversity(self, population):
@@ -124,20 +110,37 @@ class GeneticAlgorithmTSP:
 
     def create_next_generation(self, graph, population, number_of_fits_to_carryover):
         """
-        Create the next generation of routes based on the current population.
-
-        Parameters:
-        - graph: The Graph object representing the TSP graph.
-        - population: List of routes in the current population.
-        - number_of_fits_to_carryover: Number of fittest routes to carry over to the next generation.
-
-        Returns:
-        - new_population: List of routes in the new generation.
+        Create the next generation using elitism and parent-child comparison.
         """
+        print("🧬 Criando nova geração...")
+
+        # Elitismo: mantém os melhores
         new_population = self.add_fittest_routes(graph, population, number_of_fits_to_carryover)
-        new_population += [self.mutate(self.crossover(*self.select_parents(graph, population))) for _ in
-                           range(self.population_size - number_of_fits_to_carryover)]
+
+        while len(new_population) < self.population_size:
+            parent1, parent2 = self.select_parents(graph, population)
+            child = self.mutate(self.crossover(parent1, parent2))
+
+            cost_parent1 = self.computeFitness(graph, [parent1])[0]
+            cost_parent2 = self.computeFitness(graph, [parent2])[0]
+            cost_child = self.computeFitness(graph, [child])[0]
+
+            best = min([(parent1, cost_parent1), (parent2, cost_parent2), (child, cost_child)], key=lambda x: x[1])
+            new_population.append(best[0])  # adiciona o de menor custo
+
+            print(f"➕ Adicionado à nova geração: custo={best[1]}")
+
         return new_population
+
+    def is_connection_restricted(self, city1, city2):
+        x1, y1 = self.graph.nodes[city1]  # Obtém coordenadas do nó diretamente do dicionário nodes
+        x2, y2 = self.graph.nodes[city2]
+    
+        for (rx1, rx2, ry1, ry2) in restricted_areas:
+            if (min(x1, x2) < rx2 and max(x1, x2) > rx1 and
+                min(y1, y2) < ry2 and max(y1, y2) > ry1):
+                return True
+        return False
 
     def add_fittest_routes(self, graph, population, number_of_fits_to_carryover):
         """
@@ -204,31 +207,20 @@ class GeneticAlgorithmTSP:
         ]
 
     def computeFitness(self, graph, population):
-        """
-        Compute the fitness (cost) for each route in the population.
-
-        Parameters:
-        - graph: The Graph object representing the TSP graph.
-        - population: List of routes.
-
-        Returns:
-        - List of fitness values (costs).
-        """
-        return [graph.getPathCost(path) for path in population]
+        fitness_values = []
+        for path in population:
+            total_cost = 0
+            for i in range(len(path) - 1):
+                if self.is_connection_restricted(path[i], path[i + 1]):
+                    total_cost += 200  # Adiciona um custo fixo de 1000 para conexões restritas
+                else:
+                    total_cost += graph.getPathCost(path[i] + path[i + 1])
+            fitness_values.append(total_cost)
+        return fitness_values
 
     def tournamentSelection(self, graph, population):
-        """
-        Perform tournament selection to choose a parent for crossover.
-
-        Parameters:
-        - graph: The Graph object representing the TSP graph.
-        - population: List of routes in the current population.
-
-        Returns:
-        - Selected parent for crossover.
-        """
         tournament_contestants = rd.choices(population, k=self.tournament_size)
-        return min(tournament_contestants, key=lambda path: graph.getPathCost(path))
+        return min(tournament_contestants, key=lambda path: self.computeFitness(graph, [path])[0])
 
     def crossover(self, parent1, parent2):
         """
