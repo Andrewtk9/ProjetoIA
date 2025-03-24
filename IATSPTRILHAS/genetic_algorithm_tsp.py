@@ -110,26 +110,20 @@ class GeneticAlgorithmTSP:
 
     def create_next_generation(self, graph, population, number_of_fits_to_carryover):
         """
-        Create the next generation using elitism and parent-child comparison.
+        Create the next generation of routes based on the current population.
+
+        Parameters:
+        - graph: The Graph object representing the TSP graph.
+        - population: List of routes in the current population.
+        - number_of_fits_to_carryover: Number of fittest routes to carry over to the next generation.
+
+        Returns:
+        - new_population: List of routes in the new generation.
         """
-        print("🧬 Criando nova geração...")
-
-        # Elitismo: mantém os melhores
         new_population = self.add_fittest_routes(graph, population, number_of_fits_to_carryover)
-
-        while len(new_population) < self.population_size:
-            parent1, parent2 = self.select_parents(graph, population)
-            child = self.mutate(self.crossover(parent1, parent2))
-
-            cost_parent1 = self.computeFitness(graph, [parent1])[0]
-            cost_parent2 = self.computeFitness(graph, [parent2])[0]
-            cost_child = self.computeFitness(graph, [child])[0]
-
-            best = min([(parent1, cost_parent1), (parent2, cost_parent2), (child, cost_child)], key=lambda x: x[1])
-            new_population.append(best[0])  # adiciona o de menor custo
-
-            print(f"➕ Adicionado à nova geração: custo={best[1]}")
-
+        new_population += [self.mutate(self.crossover(*self.select_parents(graph, population))) for _ in
+                           range(self.population_size - number_of_fits_to_carryover)]
+        print(f"➕ Feita Nova Geração")
         return new_population
 
     def is_connection_restricted(self, city1, city2):
@@ -212,7 +206,7 @@ class GeneticAlgorithmTSP:
             total_cost = 0
             for i in range(len(path) - 1):
                 if self.is_connection_restricted(path[i], path[i + 1]):
-                    total_cost += 200  # Adiciona um custo fixo de 1000 para conexões restritas
+                    total_cost += 500  # Adiciona um custo fixo de 1000 para conexões restritas
                 else:
                     total_cost += graph.getPathCost(path[i] + path[i + 1])
             fitness_values.append(total_cost)

@@ -65,8 +65,8 @@ if __name__ == "__main__":
     y_min, y_max = 0, 151
     num_points = 230  # Número de pontos ordenados a serem gerados
     
-    restricted_areas = [(0, 13, 0, 151), (0, 305, 0, 25), (0, 305, 115, 151), (290, 305, 0, 151),
-                        (20, 55, 33, 105), (59, 137, 33, 51), (240, 283, 33, 110), (62, 232, 57, 115), (142, 232, 27, 57)]
+    restricted_areas = [(0, 15, 0, 151), (0, 305, 0, 27), (0, 305, 115, 151), (290, 305, 0, 151),
+                        (20, 55, 33, 105), (59, 137, 33, 51), (240, 283, 33, 110), (60, 230, 57, 115), (142, 230, 27, 57)]
     
     # Gerar pontos em fileiras duplas lado a lado
     points = generate_ordered_points(x_min, x_max, y_min, y_max, num_points, restricted_areas=restricted_areas, spacing=6, fileira_dist=2)
